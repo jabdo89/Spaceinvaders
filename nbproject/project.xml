@@ -3,7 +3,11 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
+<<<<<<< HEAD
             <name>SpaceInvader</name>
+=======
+            <name>SpaceInvaders</name>
+>>>>>>> 454986f4620e66a2f405c94da48386612984ae19
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

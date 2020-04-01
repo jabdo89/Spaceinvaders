@@ -33,7 +33,6 @@ public class Game implements Runnable {
     private Player player;          // to use a player
     private KeyManager keyManager;  // to manage the keyboard
     private LinkedList<Enemy> lista; // to store a random amount of enemies
-    private LinkedList<Helper> listaHelp; // to store a random amount of helpers
     private int score; // To keep track of the game score
     private int lives; // To keep track of the lvies;
     private int cont; // To keep track of how many enemies hit player
@@ -90,7 +89,6 @@ public class Game implements Runnable {
         display = new Display(title, getWidth(), getHeight());
         Assets.init();
         lista = new LinkedList<Enemy>();
-        listaHelp = new LinkedList<Helper>();
 
         player = new Player((getWidth() / 2) - 50, (getHeight() / 2) - 50, 1, 100, 100,
                 this);
@@ -105,18 +103,6 @@ public class Game implements Runnable {
                     (((int) (Math.random() * getHeight()))),
                     1, 100, 100, this);
             lista.add(enemy);
-        }
-
-        // Gets a random number between 10 and 15
-        azar = (int) (Math.random() * 6 + 10);
-
-        // adds a random amount of helpers to the list
-        for (int i = 0; i < azar; i++) {
-            Helper helper = new Helper((int) (Math.random() * getWidth() + 100)
-                    * (-1),
-                    (((int) (Math.random() * getHeight()))),
-                    1, 75, 75, this);
-            listaHelp.add(helper);
         }
 
         display.getJframe().addKeyListener(keyManager);
@@ -173,27 +159,25 @@ public class Game implements Runnable {
     public void helperBeeb() {
         Assets.stomp.play();
     }
+
     // Saves the game in a text file
     public void save() {
         try {
             // Makes a txt file to save everything
             PrintWriter writer = new PrintWriter(new FileWriter("game"));
-            
+
             // Prints the lives, the score and the number of enemies hit on 
             // the txt file
             writer.println("" + lives + "/" + score + "/" + cont);
-            
+
             // Prints the player's coordinates
             writer.println("" + player.getX() + "/" + player.getY());
-            
+
             // Goes through all the enemies and prints their coordinates 
             for (Enemy enemy : lista) {
                 writer.println("" + enemy.getX() + "/" + enemy.getY());
             }
-            // Goes through all the helpers and prints their coordinates
-            for (Helper helper : listaHelp) {
-                writer.println("" + helper.getX() + "/" + helper.getY());
-            }
+
             //System prints that it has been saved
             System.out.println("Saved");
 
@@ -238,13 +222,7 @@ public class Game implements Runnable {
                 enemy.setX(x);
                 enemy.setY(y);
             }
-            //Goes through all the helpers and changes their coordinates back
-            for (Helper helper : listaHelp) {
-                line = reader.readLine();
-                datos = line.split("/");
-                helper.setX(Integer.parseInt(datos[0]));
-                helper.setY(Integer.parseInt(datos[1]));
-            }
+
             reader.close();
         } catch (IOException e) {
             System.out.println("File Not found CALL 911");
@@ -258,7 +236,7 @@ public class Game implements Runnable {
         if (lives > 0) {
             // Checks if the game is paused and if it is it resets the saved
             // and load variables because this cant be done while paused
-            if (keyManager.p){
+            if (keyManager.p) {
                 keyManager.load = false;
                 keyManager.save = false;
             }
@@ -320,36 +298,11 @@ public class Game implements Runnable {
                         cont = 0;
                     }
                 }
-
-                // for loop that ticks all halpers
-                for (Helper helper : listaHelp) {
-                    // ticks helpers
-                    helper.tick();
-                    // reseting helpers with colision
-                    if ((player.collision(helper))) {
-                        // resets the helper's X coordinate
-                        helper.setX((int) (Math.random() * getWidth() + 100) * (-1));
-                        // resets the helper's Y coordinate
-                        helper.setY((int) (Math.random() * getHeight() - 100));
-
-                        // plays stomp sound
-                        helperBeeb();
-
-                        // adds 5 to the score
-                        score += 5;
-                    }
-
-                    // resets helpers that get to the edge of the screen
-                    if (helper.getX() + 60 >= this.getWidth()) {
-                        // resets the helper's X coordinate
-                        helper.setX((int) (Math.random() * getWidth() + 100) * (-1));
-                        // resets the helper's Y coordinate
-                        helper.setY((int) (Math.random() * getHeight() - 100));
-                    }
-                }
             }
         }
     }
+
+    
 
     private void render() {
         // get the buffer strategy from the display
@@ -376,10 +329,6 @@ public class Game implements Runnable {
                 // renders all enemies
                 for (Enemy enemy : lista) {
                     enemy.render(g);
-                }
-                // renders all helpers
-                for (Helper helper : listaHelp) {
-                    helper.render(g);
                 }
                 g.setColor(Color.red);
                 g.drawString("Lives: " + lives, 10, 15);
